@@ -1,167 +1,87 @@
 <!DOCTYPE html>
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
-    <title>💗</title>
-    <style>
-        canvas {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, .2);
-        }
-    </style>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海报生成器</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<canvas id="heart" width="1920" height="947"></canvas>
-<script>
-    window.requestAnimationFrame =
-        window.__requestAnimationFrame ||
-        window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        (function () {
-            return function (callback, element) {
-                var lastTime = element.__lastTime;
-                if (lastTime === undefined) {
-                    lastTime = 0;
-                }
-                var currTime = Date.now();
-                var timeToCall = Math.max(1, 33 - (currTime - lastTime));
-                window.setTimeout(callback, timeToCall);
-                element.__lastTime = currTime + timeToCall;
-            };
-        })();
-    window.isDevice = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(((navigator.userAgent || navigator.vendor || window.opera)).toLowerCase()));
-    var loaded = false;
-    var init = function () {
-        if (loaded) return;
-        loaded = true;
-        var mobile = window.isDevice;
-        var koef = mobile ? 0.5 : 1;
-        var canvas = document.getElementById('heart');
-        var ctx = canvas.getContext('2d');
-        var width = canvas.width = koef * innerWidth;
-        var height = canvas.height = koef * innerHeight;
-        var rand = Math.random;
-        ctx.fillStyle = "rgba(0,0,0,1)";
-        ctx.fillRect(0, 0, width, height);
-
-        var heartPosition = function (rad) {
-            //return [Math.sin(rad), Math.cos(rad)];
-            return [Math.pow(Math.sin(rad), 3), -(15 * Math.cos(rad) - 5 * Math.cos(2 * rad) - 2 * Math.cos(3 * rad) - Math.cos(4 * rad))];
-        };
-        var scaleAndTranslate = function (pos, sx, sy, dx, dy) {
-            return [dx + pos[0] * sx, dy + pos[1] * sy];
-        };
-
-        window.addEventListener('resize', function () {
-            width = canvas.width = koef * innerWidth;
-            height = canvas.height = koef * innerHeight;
-            ctx.fillStyle = "rgba(0,0,0,1)";
-            ctx.fillRect(0, 0, width, height);
-        });
-
-        var traceCount = mobile ? 20 : 50;
-        var pointsOrigin = [];
-        var i;
-        var dr = mobile ? 0.3 : 0.1;
-        for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 210, 13, 0, 0));
-        for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 150, 9, 0, 0));
-        for (i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(heartPosition(i), 90, 5, 0, 0));
-        var heartPointsCount = pointsOrigin.length;
-
-        var targetPoints = [];
-        var pulse = function (kx, ky) {
-            for (i = 0; i < pointsOrigin.length; i++) {
-                targetPoints[i] = [];
-                targetPoints[i][0] = kx * pointsOrigin[i][0] + width / 2;
-                targetPoints[i][1] = ky * pointsOrigin[i][1] + height / 2;
-            }
-        };
-
-        var e = [];
-        for (i = 0; i < heartPointsCount; i++) {
-            var x = rand() * width;
-            var y = rand() * height;
-            e[i] = {
-                vx: 0,
-                vy: 0,
-                R: 2,
-                speed: rand() + 5,
-                q: ~~(rand() * heartPointsCount),
-                D: 2 * (i % 2) - 1,
-                force: 0.2 * rand() + 0.7,
-                f: "hsla(0," + ~~(40 * rand() + 60) + "%," + ~~(60 * rand() + 20) + "%,.3)",
-                trace: []
-            };
-            for (var k = 0; k < traceCount; k++) e[i].trace[k] = {x: x, y: y};
-        }
-
-        var config = {
-            traceK: 0.4,
-            timeDelta: 0.01
-        };
-
-        var time = 0;
-        var loop = function () {
-            var n = -Math.cos(time);
-            pulse((1 + n) * .5, (1 + n) * .5);
-            time += ((Math.sin(time)) < 0 ? 9 : (n > 0.8) ? .2 : 1) * config.timeDelta;
-            ctx.fillStyle = "rgba(0,0,0,.1)";
-            ctx.fillRect(0, 0, width, height);
-            for (i = e.length; i--;) {
-                var u = e[i];
-                var q = targetPoints[u.q];
-                var dx = u.trace[0].x - q[0];
-                var dy = u.trace[0].y - q[1];
-                var length = Math.sqrt(dx * dx + dy * dy);
-                if (10 > length) {
-                    if (0.95 < rand()) {
-                        u.q = ~~(rand() * heartPointsCount);
-                    } else {
-                        if (0.99 < rand()) {
-                            u.D *= -1;
-                        }
-                        u.q += u.D;
-                        u.q %= heartPointsCount;
-                        if (0 > u.q) {
-                            u.q += heartPointsCount;
-                        }
-                    }
-                }
-                u.vx += -dx / length * u.speed;
-                u.vy += -dy / length * u.speed;
-                u.trace[0].x += u.vx;
-                u.trace[0].y += u.vy;
-                u.vx *= u.force;
-                u.vy *= u.force;
-                for (k = 0; k < u.trace.length - 1;) {
-                    var T = u.trace[k];
-                    var N = u.trace[++k];
-                    N.x -= config.traceK * (N.x - T.x);
-                    N.y -= config.traceK * (N.y - T.y);
-                }
-                ctx.fillStyle = u.f;
-                for (k = 0; k < u.trace.length; k++) {
-                    ctx.fillRect(u.trace[k].x, u.trace[k].y, 1, 1);
-                }
-            }
-            ctx.fillStyle = "rgba(255,255,255,1)";
-            for (i = u.trace.length + 13; i--;) ctx.fillRect(targetPoints[i][0], targetPoints[i][1], 2, 2);
-
-            window.requestAnimationFrame(loop, canvas);
-        };
-        loop();
-    };
-
-    var s = document.readyState;
-    if (s === 'complete' || s === 'loaded' || s === 'interactive') init();
-    else document.addEventListener('DOMContentLoaded', init, false);
-</script>
-
-</body></html>
+    <div class="container">
+        <h1>海报生成器</h1>
+        
+        <div class="input-section">
+            <h2>输入信息</h2>
+            <div class="form-group">
+                <label for="title">标题:</label>
+                <input type="text" id="title" placeholder="请输入海报标题">
+            </div>
+            
+            <div class="form-group">
+                <label for="subtitle">副标题:</label>
+                <input type="text" id="subtitle" placeholder="请输入副标题">
+            </div>
+            
+            <div class="form-group">
+                <label for="content">内容:</label>
+                <textarea id="content" placeholder="请输入海报内容"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>背景图片:</label>
+                <div class="image-options">
+                    <input type="radio" id="templateOption" name="imageType" value="template" checked>
+                    <label for="templateOption">模板</label>
+                    <input type="radio" id="urlOption" name="imageType" value="url">
+                    <label for="urlOption">URL</label>
+                    <input type="radio" id="localOption" name="imageType" value="local">
+                    <label for="localOption">上传图片</label>
+                </div>
+                
+                <!-- 模板选择 -->
+                <div id="templateSelection" class="template-selection">
+                    <div class="template-images">
+                        <img src="bg1.png" alt="背景1" class="template-img" data-src="bg1.png">
+                        <img src="bg2.png" alt="背景2" class="template-img" data-src="bg2.png">
+                        <img src="bg3.png" alt="背景3" class="template-img" data-src="bg3.png">
+                        <img src="bg4.png" alt="背景4" class="template-img" data-src="bg4.png">
+                    </div>
+                </div>
+                
+                <!-- URL输入 -->
+                <input type="text" id="imageUrl" placeholder="请输入背景图片URL" style="display: none;">
+                
+                <!-- 本地上传 -->
+                <input type="file" id="localImage" accept="image/*" style="display: none;">
+                
+                <!-- 上传模板按钮 -->
+                <div id="uploadTemplateSection" style="margin-top: 10px; display: none;">
+                    <button id="uploadTemplateBtn" type="button">上传为模板</button>
+                    <p>上传的图片将保存为新的背景模板</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="bgColor">背景颜色:</label>
+                <input type="color" id="bgColor" value="#f0f0f0">
+            </div>
+            
+            <button id="generateBtn">生成海报</button>
+        </div>
+        
+        <div class="preview-section">
+            <h2>海报预览</h2>
+            <div id="posterCanvas">
+                <div id="poster" class="poster">
+                    <h3 id="posterTitle">标题</h3>
+                    <h4 id="posterSubtitle">副标题</h4>
+                    <p id="posterContent">内容</p>
+                </div>
+            </div>
+            <button id="downloadBtn" disabled>下载海报</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
