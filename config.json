@@ -1,0 +1,22 @@
+{
+  "labels": {
+    "title": "网点",
+    "subtitle": "人员",
+    "content": "内容"
+  },
+  "defaults": {
+    "template": "bg1.png",
+    "titlePosition": 0,
+    "titleSubtitleSpacing": 50,
+    "subtitleContentSpacing": 60,
+    "titleFontSize": "32px",
+    "titleFontColor": "#ffffff",
+    "subtitleFontSize": "22px",
+    "subtitleFontColor": "#ffffff",
+    "contentFontSize": "22px",
+    "contentFontColor": "#ffffff"
+  },
+  "ui": {
+    "showConfigPanel": false
+  }
+}

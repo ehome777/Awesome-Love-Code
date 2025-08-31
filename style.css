@@ -14,38 +14,64 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
 }
 
 h1 {
     text-align: center;
     margin-bottom: 30px;
-    color: #2c3e50;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-size: 2.5em;
+    background: linear-gradient(45deg, #ffffff, #f0f0f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 h2 {
-    color: #34495e;
+    color: #2c3e50;
     margin-bottom: 20px;
-    border-bottom: 2px solid #3498db;
+    border-bottom: 3px solid #3498db;
     padding-bottom: 10px;
+    font-size: 1.8em;
+    text-align: center;
+    background: linear-gradient(45deg, #3498db, #2c3e50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .input-section, .preview-section {
     background: white;
-    border-radius: 10px;
-    padding: 25px;
+    border-radius: 15px;
+    padding: 30px;
     margin-bottom: 30px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eee;
 }
 
 .form-group {
     margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.form-group:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-weight: bold;
     color: #2c3e50;
+    font-size: 14px;
 }
 
 .image-options {
@@ -94,18 +120,21 @@ label {
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
 }
 
-input[type="text"], textarea {
+
+input[type="text"], textarea, select {
     width: 100%;
     padding: 12px;
-    border: 2px solid #bdc3c7;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: border-color 0.3s;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s;
+    background-color: #fff;
 }
 
-input[type="text"]:focus, textarea:focus {
+input[type="text"]:focus, textarea:focus, select:focus {
     border-color: #3498db;
     outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
 input[type="color"] {
@@ -113,10 +142,16 @@ input[type="color"] {
     height: 40px;
     border: none;
     cursor: pointer;
+    border-radius: 5px;
+}
+
+input[type="range"] {
+    width: 70%;
+    margin-right: 10px;
 }
 
 textarea {
-    height: 100px;
+    height: 120px;
     resize: vertical;
 }
 
@@ -140,6 +175,30 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* 高级设置切换按钮样式 */
+.advanced-toggle {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.advanced-toggle-btn {
+    background-color: #9b59b6;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.advanced-toggle-btn:hover {
+    background-color: #8e44ad;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
 #uploadTemplateBtn {
     background-color: #2ecc71;
     padding: 8px 15px;
@@ -160,11 +219,13 @@ button:disabled {
     width: 375px; /* iPhone X宽度 */
     height: 667px; /* iPhone X高度 */
     padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     background-size: cover;
     background-position: center;
     position: relative;
+    overflow: hidden;
+    border: 3px solid #fff;
 }
 
 .poster::before {
@@ -180,6 +241,12 @@ button:disabled {
     border-radius: 10px;
 }
 
+.poster-element {
+    transition: all 0.3s ease;
+    text-align: center;
+    width: 100%;
+}
+
 .poster h3 {
     font-size: 32px;
     color: white;
@@ -188,7 +255,6 @@ button:disabled {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    transition: transform 0.3s ease;
     margin: 0;
 }
 
@@ -255,37 +321,39 @@ button:disabled {
     #posterCanvas {
         overflow-x: auto;
     }
-}
-
-/* 针对小屏幕设备的额外优化 */
-@media (max-width: 480px) {
-    .container {
-        padding: 5px;
-    }
     
-    .input-section, .preview-section {
+    /* 移动端表单组优化 */
+    .form-group {
         padding: 10px;
     }
-    
-    .poster {
-        padding: 20px;
-    }
-    
-    .poster h3 {
-        font-size: 24px;
-    }
-    
-    .poster h4 {
-        font-size: 18px;
-    }
-    
-    .poster p {
-        font-size: 14px;
-    }
-    
-    button {
-        width: 100%;
-        padding: 15px;
-        font-size: 16px;
-    }
+}
+
+/* 滚动条样式优化 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3498db;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2980b9;
+}
+
+/* 焦点环样式优化 */
+*:focus {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
 }

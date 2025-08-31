@@ -1,4 +1,52 @@
+// 引入html2canvas库
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
+// 加载html2canvas库并在加载完成后初始化功能
+// 使用多个CDN源作为备选
+const cdnSources = [
+    'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
+    'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js'
+];
+
+function loadHtml2Canvas() {
+    let sourceIndex = 0;
+    
+    function tryNextSource() {
+        if (sourceIndex >= cdnSources.length) {
+            console.error('所有CDN源都加载失败');
+            alert('海报生成库加载失败，请检查网络连接后刷新页面');
+            return;
+        }
+        
+        loadScript(cdnSources[sourceIndex])
+            .then(() => {
+                console.log('html2canvas库加载成功，来源:', cdnSources[sourceIndex]);
+                // 库加载成功后启用下载按钮
+                const downloadBtn = document.getElementById('downloadBtn');
+                if (downloadBtn) {
+                    downloadBtn.disabled = false;
+                }
+            })
+            .catch((error) => {
+                console.warn('CDN源加载失败:', cdnSources[sourceIndex], error);
+                sourceIndex++;
+                tryNextSource();
+            });
+    }
+    
+    tryNextSource();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // 原有元素
     const generateBtn = document.getElementById('generateBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const titleInput = document.getElementById('title');
@@ -30,6 +78,103 @@ document.addEventListener('DOMContentLoaded', function() {
     const poster = document.getElementById('poster');
     let selectedTemplate = 'bg1.png';
     let backgroundImageData = null;
+    
+    // 高级设置切换功能
+    const advancedToggle = document.getElementById('advancedToggle');
+    const advancedSettings = document.getElementById('advancedSettings');
+    const backgroundSettings = document.getElementById('backgroundSettings');
+    const titleFontSettings = document.getElementById('titleFontSettings');
+    const subtitleFontSettings = document.getElementById('subtitleFontSettings');
+    const contentFontSettings = document.getElementById('contentFontSettings');
+    
+    advancedToggle.addEventListener('click', function() {
+        if (advancedSettings.style.display === 'none') {
+            advancedSettings.style.display = 'block';
+            backgroundSettings.style.display = 'block';
+            titleFontSettings.style.display = 'block';
+            subtitleFontSettings.style.display = 'block';
+            contentFontSettings.style.display = 'block';
+            advancedToggle.textContent = '隐藏高级设置';
+        } else {
+            advancedSettings.style.display = 'none';
+            backgroundSettings.style.display = 'none';
+            titleFontSettings.style.display = 'none';
+            subtitleFontSettings.style.display = 'none';
+            contentFontSettings.style.display = 'none';
+            advancedToggle.textContent = '显示高级设置';
+        }
+    });
+    
+    // 加载配置文件
+    fetch('config.json')
+        .then(response => response.json())
+        .then(config => {
+            // 应用标签配置
+            document.querySelector('label[for="title"]').textContent = config.labels.title + ':';
+            document.querySelector('label[for="subtitle"]').textContent = config.labels.subtitle + ':';
+            document.querySelector('label[for="content"]').textContent = config.labels.content + ':';
+            
+            // 更新输入框的placeholder
+            titleInput.placeholder = '请输入' + config.labels.title;
+            subtitleInput.placeholder = '请输入' + config.labels.subtitle;
+            contentInput.placeholder = '请输入' + config.labels.content;
+            
+            // 应用默认值配置
+            selectedTemplate = config.defaults.template;
+            
+            // 设置默认位置和间距
+            titlePositionInput.value = config.defaults.titlePosition;
+            titlePositionValue.textContent = config.defaults.titlePosition + 'px';
+            subtitlePositionInput.value = config.defaults.titleSubtitleSpacing;
+            subtitlePositionValue.textContent = config.defaults.titleSubtitleSpacing + 'px';
+            contentPositionInput.value = config.defaults.subtitleContentSpacing;
+            contentPositionValue.textContent = config.defaults.subtitleContentSpacing + 'px';
+            
+            // 设置默认字体大小和颜色
+            titleFontSizeSelect.value = config.defaults.titleFontSize;
+            titleFontColorInput.value = config.defaults.titleFontColor;
+            subtitleFontSizeSelect.value = config.defaults.subtitleFontSize;
+            subtitleFontColorInput.value = config.defaults.subtitleFontColor;
+            contentFontSizeSelect.value = config.defaults.contentFontSize;
+            contentFontColorInput.value = config.defaults.contentFontColor;
+            
+            // 设置高级设置面板显示状态
+            if (config.ui.showConfigPanel) {
+                advancedSettings.style.display = 'block';
+                backgroundSettings.style.display = 'block';
+                titleFontSettings.style.display = 'block';
+                subtitleFontSettings.style.display = 'block';
+                contentFontSettings.style.display = 'block';
+                advancedToggle.textContent = '隐藏高级设置';
+            } else {
+                advancedSettings.style.display = 'none';
+                backgroundSettings.style.display = 'none';
+                titleFontSettings.style.display = 'none';
+                subtitleFontSettings.style.display = 'none';
+                contentFontSettings.style.display = 'none';
+                advancedToggle.textContent = '显示高级设置';
+            }
+            
+            // 初始化时应用默认配置
+            applyDefaultConfig();
+        })
+        .catch(error => {
+            console.error('配置文件加载失败:', error);
+            // 如果配置文件加载失败，使用默认配置
+            applyDefaultConfig();
+        });
+    
+    // 应用默认配置的函数
+    function applyDefaultConfig() {
+        // 设置默认选中的模板图片
+        templateImages.forEach(img => {
+            if (img.getAttribute('data-src') === selectedTemplate) {
+                img.classList.add('selected');
+            } else {
+                img.classList.remove('selected');
+            }
+        });
+    }
     
     // 模板图片选择
     templateImages.forEach(img => {
@@ -150,11 +295,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // 标题位置只受titlePosition影响
         posterTitle.style.transform = `translate(-50%, calc(-50% + ${titlePosition}px))`;
         
-        // 副标题位置相对于海报中心固定偏移
-        posterSubtitle.style.top = `calc(50% + ${subtitlePosition}px)`;
+        // 副标题位置相对于海报中心进行计算
+        const titleActualPosition = 50 + parseInt(titlePosition);
+        posterSubtitle.style.top = `calc(${titleActualPosition}% + ${subtitlePosition}px)`;
+        posterSubtitle.style.left = '50%';
+        posterSubtitle.style.transform = 'translate(-50%, -50%)';
         
-        // 内容位置相对于副标题位置固定偏移
-        posterContent.style.top = `calc(50% + ${contentPosition}px)`;
+        // 内容位置相对于副标题位置进行固定偏移
+        posterContent.style.top = `calc(${titleActualPosition}% + ${subtitlePosition}px + ${contentPosition}px)`;
+        posterContent.style.left = '50%';
+        posterContent.style.transform = 'translate(-50%, -50%)';
         
         // 设置背景
         if (templateOption.checked) {
@@ -249,56 +399,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('生成海报失败，请重试或更换浏览器');
         });
     });
-});
-
-// 引入html2canvas库
-function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
-}
-
-// 加载html2canvas库并在加载完成后初始化功能
-// 使用多个CDN源作为备选
-const cdnSources = [
-    'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
-    'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js'
-];
-
-function loadHtml2Canvas() {
-    let sourceIndex = 0;
     
-    function tryNextSource() {
-        if (sourceIndex >= cdnSources.length) {
-            console.error('所有CDN源都加载失败');
-            alert('海报生成库加载失败，请检查网络连接后刷新页面');
-            return;
-        }
-        
-        loadScript(cdnSources[sourceIndex])
-            .then(() => {
-                console.log('html2canvas库加载成功，来源:', cdnSources[sourceIndex]);
-                // 库加载成功后启用下载按钮
-                const downloadBtn = document.getElementById('downloadBtn');
-                if (downloadBtn) {
-                    downloadBtn.disabled = false;
-                }
-            })
-            .catch((error) => {
-                console.warn('CDN源加载失败:', cdnSources[sourceIndex], error);
-                sourceIndex++;
-                tryNextSource();
-            });
-    }
-    
-    tryNextSource();
-}
-
-// 页面加载完成后开始加载库
-document.addEventListener('DOMContentLoaded', function() {
+    // 页面加载完成后开始加载库
     loadHtml2Canvas();
 });

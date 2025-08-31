@@ -12,6 +12,9 @@
         
         <div class="input-section">
             <h2>输入信息</h2>
+            <div class="advanced-toggle">
+                <button id="advancedToggle" class="advanced-toggle-btn">显示高级设置</button>
+            </div>
             <div class="form-group">
                 <label for="title">标题:</label>
                 <input type="text" id="title" placeholder="请输入海报标题">
@@ -27,61 +30,67 @@
                 <textarea id="content" placeholder="请输入海报内容"></textarea>
             </div>
             
-            <div class="form-group">
-                <label>背景图片:</label>
-                <div class="image-options">
-                    <input type="radio" id="templateOption" name="imageType" value="template" checked>
-                    <label for="templateOption">模板</label>
-                    <input type="radio" id="urlOption" name="imageType" value="url">
-                    <label for="urlOption">URL</label>
-                    <input type="radio" id="localOption" name="imageType" value="local">
-                    <label for="localOption">上传图片</label>
-                </div>
-                
-                <!-- 模板选择 -->
-                <div id="templateSelection" class="template-selection">
-                    <div class="template-images">
-                        <img src="bg1.png" alt="背景1" class="template-img" data-src="bg1.png">
-                        <img src="bg2.png" alt="背景2" class="template-img" data-src="bg2.png">
-                        <img src="bg3.png" alt="背景3" class="template-img" data-src="bg3.png">
-                        <img src="bg4.png" alt="背景4" class="template-img" data-src="bg4.png">
+            <!-- 背景设置 -->
+            <div id="backgroundSettings" style="display: none;">
+                <div class="form-group" id="backgroundImageSection">
+                    <label>背景图片:</label>
+                    <div class="image-options">
+                        <input type="radio" id="templateOption" name="imageType" value="template" checked>
+                        <label for="templateOption">模板</label>
+                        <input type="radio" id="urlOption" name="imageType" value="url">
+                        <label for="urlOption">URL</label>
+                        <input type="radio" id="localOption" name="imageType" value="local">
+                        <label for="localOption">上传图片</label>
+                    </div>
+                    
+                    <!-- 模板选择 -->
+                    <div id="templateSelection" class="template-selection">
+                        <div class="template-images">
+                            <img src="bg1.png" alt="背景1" class="template-img" data-src="bg1.png">
+                            <img src="bg2.png" alt="背景2" class="template-img" data-src="bg2.png">
+                            <img src="bg3.png" alt="背景3" class="template-img" data-src="bg3.png">
+                            <img src="bg4.png" alt="背景4" class="template-img" data-src="bg4.png">
+                        </div>
+                    </div>
+                    
+                    <!-- URL输入 -->
+                    <input type="text" id="imageUrl" placeholder="请输入背景图片URL" style="display: none;">
+                    
+                    <!-- 本地上传 -->
+                    <input type="file" id="localImage" accept="image/*" style="display: none;">
+                    
+                    <!-- 上传模板按钮 -->
+                    <div id="uploadTemplateSection" style="margin-top: 10px; display: none;">
+                        <button id="uploadTemplateBtn" type="button">上传为模板</button>
+                        <p>上传的图片将保存为新的背景模板</p>
                     </div>
                 </div>
                 
-                <!-- URL输入 -->
-                <input type="text" id="imageUrl" placeholder="请输入背景图片URL" style="display: none;">
-                
-                <!-- 本地上传 -->
-                <input type="file" id="localImage" accept="image/*" style="display: none;">
-                
-                <!-- 上传模板按钮 -->
-                <div id="uploadTemplateSection" style="margin-top: 10px; display: none;">
-                    <button id="uploadTemplateBtn" type="button">上传为模板</button>
-                    <p>上传的图片将保存为新的背景模板</p>
+                <div class="form-group" id="backgroundColorSection">
+                    <label for="bgColor">背景颜色:</label>
+                    <input type="color" id="bgColor" value="#f0f0f0">
                 </div>
             </div>
             
-            <div class="form-group">
-                <label for="bgColor">背景颜色:</label>
-                <input type="color" id="bgColor" value="#f0f0f0">
-            </div>
-            
             <!-- 标题字体控制 -->
-            <div class="form-group">
-                <label for="titleFontSize">标题字体大小:</label>
-                <select id="titleFontSize">
-                    <option value="24px">小</option>
-                    <option value="32px" selected>中</option>
-                    <option value="40px">大</option>
-                    <option value="48px">超大</option>
-                </select>
+            <div id="titleFontSettings" style="display: none;">
+                <div class="form-group" id="titleFontSizeSection">
+                    <label for="titleFontSize">标题字体大小:</label>
+                    <select id="titleFontSize">
+                        <option value="24px">小</option>
+                        <option value="32px" selected>中</option>
+                        <option value="40px">大</option>
+                        <option value="48px">超大</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="titleFontColorSection">
+                    <label for="titleFontColor">标题字体颜色:</label>
+                    <input type="color" id="titleFontColor" value="#ffffff">
+                </div>
             </div>
             
-            <div class="form-group">
-                <label for="titleFontColor">标题字体颜色:</label>
-                <input type="color" id="titleFontColor" value="#ffffff">
-            </div>
-            
+            <div id="advancedSettings" style="display: none;">
             <!-- 标题位置控制 -->
             <div class="form-group">
                 <label for="titlePosition">标题垂直位置:</label>
@@ -99,40 +108,46 @@
             <!-- 内容位置控制 -->
             <div class="form-group">
                 <label for="contentPosition">内容相对于副标题位置 (px):</label>
-                <input type="range" id="contentPosition" min="0" max="300" value="100">
-                <span id="contentPositionValue">100px</span>
+                <input type="range" id="contentPosition" min="0" max="200" value="60">
+                <span id="contentPositionValue">60px</span>
             </div>
             
             <!-- 副标题字体控制 -->
-            <div class="form-group">
-                <label for="subtitleFontSize">副标题字体大小:</label>
-                <select id="subtitleFontSize">
-                    <option value="18px">小</option>
-                    <option value="22px" selected>中</option>
-                    <option value="28px">大</option>
-                    <option value="34px">超大</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="subtitleFontColor">副标题字体颜色:</label>
-                <input type="color" id="subtitleFontColor" value="#ffffff">
+            <div id="subtitleFontSettings" style="display: none;">
+                <div class="form-group" id="subtitleFontSizeSection">
+                    <label for="subtitleFontSize">副标题字体大小:</label>
+                    <select id="subtitleFontSize">
+                        <option value="18px">小</option>
+                        <option value="22px" selected>中</option>
+                        <option value="28px">大</option>
+                        <option value="34px">超大</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="subtitleFontColorSection">
+                    <label for="subtitleFontColor">副标题字体颜色:</label>
+                    <input type="color" id="subtitleFontColor" value="#ffffff">
+                </div>
             </div>
             
             <!-- 内容字体控制 -->
-            <div class="form-group">
-                <label for="contentFontSize">内容字体大小:</label>
-                <select id="contentFontSize">
-                    <option value="14px">小</option>
-                    <option value="16px" selected>中</option>
-                    <option value="20px">大</option>
-                    <option value="24px">超大</option>
-                </select>
+            <div id="contentFontSettings" style="display: none;">
+                <div class="form-group" id="contentFontSizeSection">
+                    <label for="contentFontSize">内容字体大小:</label>
+                    <select id="contentFontSize">
+                        <option value="14px">小</option>
+                        <option value="16px">中</option>
+                        <option value="20px">大</option>
+                        <option value="22px" selected>较大</option>
+                        <option value="24px">超大</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="contentFontColorSection">
+                    <label for="contentFontColor">内容字体颜色:</label>
+                    <input type="color" id="contentFontColor" value="#ffffff">
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="contentFontColor">内容字体颜色:</label>
-                <input type="color" id="contentFontColor" value="#ffffff">
             </div>
             
             <button id="generateBtn">生成海报</button>
@@ -142,8 +157,8 @@
             <h2>海报预览</h2>
             <div id="posterCanvas">
                 <div id="poster" class="poster">
-                    <h3 id="posterTitle" class="poster-element">标题</h3>
-                    <h4 id="posterSubtitle" class="poster-element">副标题</h4>
+                    <h3 id="posterTitle" class="poster-element">网点</h3>
+                    <h4 id="posterSubtitle" class="poster-element">人员</h4>
                     <p id="posterContent" class="poster-element">内容</p>
                 </div>
             </div>
