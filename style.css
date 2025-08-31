@@ -191,9 +191,17 @@ button:disabled {
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .advanced-toggle-btn:hover {
+    background-color: #8e44ad;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.advanced-toggle-btn:active {
     background-color: #8e44ad;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
