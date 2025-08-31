@@ -12,6 +12,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const localImageInput = document.getElementById('localImage');
     const templateImages = document.querySelectorAll('.template-img');
     const bgColorInput = document.getElementById('bgColor');
+    const titleFontSizeSelect = document.getElementById('titleFontSize');
+    const titleFontColorInput = document.getElementById('titleFontColor');
+    const subtitleFontSizeSelect = document.getElementById('subtitleFontSize');
+    const subtitleFontColorInput = document.getElementById('subtitleFontColor');
+    const contentFontSizeSelect = document.getElementById('contentFontSize');
+    const contentFontColorInput = document.getElementById('contentFontColor');
     const posterTitle = document.getElementById('posterTitle');
     const posterSubtitle = document.getElementById('posterSubtitle');
     const posterContent = document.getElementById('posterContent');
@@ -93,10 +99,28 @@ document.addEventListener('DOMContentLoaded', function() {
         const content = contentInput.value || '内容';
         const bgColor = bgColorInput.value;
         
+        // 获取字体设置
+        const titleFontSize = titleFontSizeSelect.value;
+        const titleFontColor = titleFontColorInput.value;
+        const subtitleFontSize = subtitleFontSizeSelect.value;
+        const subtitleFontColor = subtitleFontColorInput.value;
+        const contentFontSize = contentFontSizeSelect.value;
+        const contentFontColor = contentFontColorInput.value;
+        
         // 更新海报内容
         posterTitle.textContent = title;
         posterSubtitle.textContent = subtitle;
         posterContent.textContent = content;
+        
+        // 设置独立字体样式
+        posterTitle.style.fontSize = titleFontSize;
+        posterTitle.style.color = titleFontColor;
+        
+        posterSubtitle.style.fontSize = subtitleFontSize;
+        posterSubtitle.style.color = subtitleFontColor;
+        
+        posterContent.style.fontSize = contentFontSize;
+        posterContent.style.color = contentFontColor;
         
         // 设置背景
         if (templateOption.checked) {
