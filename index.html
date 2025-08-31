@@ -82,6 +82,27 @@
                 <input type="color" id="titleFontColor" value="#ffffff">
             </div>
             
+            <!-- 标题位置控制 -->
+            <div class="form-group">
+                <label for="titlePosition">标题垂直位置:</label>
+                <input type="range" id="titlePosition" min="-100" max="100" value="0">
+                <span id="titlePositionValue">0px</span>
+            </div>
+            
+            <!-- 副标题位置控制 -->
+            <div class="form-group">
+                <label for="subtitlePosition">副标题相对于标题位置 (px):</label>
+                <input type="range" id="subtitlePosition" min="0" max="200" value="50">
+                <span id="subtitlePositionValue">50px</span>
+            </div>
+            
+            <!-- 内容位置控制 -->
+            <div class="form-group">
+                <label for="contentPosition">内容相对于副标题位置 (px):</label>
+                <input type="range" id="contentPosition" min="0" max="300" value="100">
+                <span id="contentPositionValue">100px</span>
+            </div>
+            
             <!-- 副标题字体控制 -->
             <div class="form-group">
                 <label for="subtitleFontSize">副标题字体大小:</label>
@@ -121,9 +142,9 @@
             <h2>海报预览</h2>
             <div id="posterCanvas">
                 <div id="poster" class="poster">
-                    <h3 id="posterTitle">标题</h3>
-                    <h4 id="posterSubtitle">副标题</h4>
-                    <p id="posterContent">内容</p>
+                    <h3 id="posterTitle" class="poster-element">标题</h3>
+                    <h4 id="posterSubtitle" class="poster-element">副标题</h4>
+                    <p id="posterContent" class="poster-element">内容</p>
                 </div>
             </div>
             <button id="downloadBtn" disabled>下载海报</button>

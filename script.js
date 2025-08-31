@@ -18,6 +18,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const subtitleFontColorInput = document.getElementById('subtitleFontColor');
     const contentFontSizeSelect = document.getElementById('contentFontSize');
     const contentFontColorInput = document.getElementById('contentFontColor');
+    const titlePositionInput = document.getElementById('titlePosition');
+    const titlePositionValue = document.getElementById('titlePositionValue');
+    const subtitlePositionInput = document.getElementById('subtitlePosition');
+    const subtitlePositionValue = document.getElementById('subtitlePositionValue');
+    const contentPositionInput = document.getElementById('contentPosition');
+    const contentPositionValue = document.getElementById('contentPositionValue');
     const posterTitle = document.getElementById('posterTitle');
     const posterSubtitle = document.getElementById('posterSubtitle');
     const posterContent = document.getElementById('posterContent');
@@ -35,6 +41,21 @@ document.addEventListener('DOMContentLoaded', function() {
             // 保存选中的模板
             selectedTemplate = this.getAttribute('data-src');
         });
+    });
+    
+    // 标题位置滑块值显示
+    titlePositionInput.addEventListener('input', function() {
+        titlePositionValue.textContent = this.value + 'px';
+    });
+    
+    // 副标题位置滑块值显示
+    subtitlePositionInput.addEventListener('input', function() {
+        subtitlePositionValue.textContent = this.value + 'px';
+    });
+    
+    // 内容位置滑块值显示
+    contentPositionInput.addEventListener('input', function() {
+        contentPositionValue.textContent = this.value + 'px';
     });
     
     // 切换图片输入方式
@@ -106,6 +127,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const subtitleFontColor = subtitleFontColorInput.value;
         const contentFontSize = contentFontSizeSelect.value;
         const contentFontColor = contentFontColorInput.value;
+        const titlePosition = titlePositionInput.value;
+        const subtitlePosition = subtitlePositionInput.value;
+        const contentPosition = contentPositionInput.value;
         
         // 更新海报内容
         posterTitle.textContent = title;
@@ -121,6 +145,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         posterContent.style.fontSize = contentFontSize;
         posterContent.style.color = contentFontColor;
+        
+        // 设置独立元素位置
+        // 标题位置只受titlePosition影响
+        posterTitle.style.transform = `translate(-50%, calc(-50% + ${titlePosition}px))`;
+        
+        // 副标题位置相对于海报中心固定偏移
+        posterSubtitle.style.top = `calc(50% + ${subtitlePosition}px)`;
+        
+        // 内容位置相对于副标题位置固定偏移
+        posterContent.style.top = `calc(50% + ${contentPosition}px)`;
         
         // 设置背景
         if (templateOption.checked) {
@@ -150,20 +184,69 @@ document.addEventListener('DOMContentLoaded', function() {
             poster.style.backgroundImage = 'none';
             poster.style.backgroundColor = bgColor;
         }
-        
-        // 启用下载按钮
-        downloadBtn.disabled = false;
     });
     
     // 下载海报
     downloadBtn.addEventListener('click', function() {
+        // 检查html2canvas是否已加载
+        if (typeof html2canvas === 'undefined') {
+            alert('海报生成库尚未加载完成，请稍后再试');
+            return;
+        }
+        
+        console.log('开始生成海报...');
+        
         // 创建canvas元素
         html2canvas(poster).then(function(canvas) {
-            // 将canvas转换为图片并下载
+            console.log('海报生成成功');
+            
+            // 生成默认文件名：标题+当前日期
+            const title = titleInput.value || '海报';
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const filename = `${title}_${year}${month}${day}.png`;
+            
+            // 简化且可靠的下载方法
+            const dataURL = canvas.toDataURL('image/png');
             const link = document.createElement('a');
-            link.download = '海报.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            link.download = filename;
+            link.href = dataURL;
+            link.style.display = 'none';
+            
+            // 添加到DOM，点击，然后移除
+            document.body.appendChild(link);
+            
+            // 使用setTimeout确保在某些浏览器中正确执行
+            setTimeout(function() {
+                try {
+                    link.click();
+                    console.log('海报下载成功');
+                } catch (e) {
+                    console.error('下载失败，尝试备选方案:', e);
+                    // 如果click方法失败，尝试其他方法
+                    if (document.createEvent) {
+                        const event = document.createEvent('MouseEvents');
+                        event.initEvent('click', true, true);
+                        link.dispatchEvent(event);
+                    } else {
+                        // 最后的兜底方案
+                        window.open(dataURL, '_blank');
+                    }
+                }
+                
+                // 安全地移除元素
+                if (link.parentNode) {
+                    document.body.removeChild(link);
+                }
+                
+                // 释放内存
+                link.href = '';
+            }, 100);
+        }).catch(function(error) {
+            console.error('生成海报失败:', error);
+            alert('生成海报失败，请重试或更换浏览器');
         });
     });
 });
@@ -179,5 +262,43 @@ function loadScript(src) {
     });
 }
 
-// 加载html2canvas库
-loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
+// 加载html2canvas库并在加载完成后初始化功能
+// 使用多个CDN源作为备选
+const cdnSources = [
+    'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
+    'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js'
+];
+
+function loadHtml2Canvas() {
+    let sourceIndex = 0;
+    
+    function tryNextSource() {
+        if (sourceIndex >= cdnSources.length) {
+            console.error('所有CDN源都加载失败');
+            alert('海报生成库加载失败，请检查网络连接后刷新页面');
+            return;
+        }
+        
+        loadScript(cdnSources[sourceIndex])
+            .then(() => {
+                console.log('html2canvas库加载成功，来源:', cdnSources[sourceIndex]);
+                // 库加载成功后启用下载按钮
+                const downloadBtn = document.getElementById('downloadBtn');
+                if (downloadBtn) {
+                    downloadBtn.disabled = false;
+                }
+            })
+            .catch((error) => {
+                console.warn('CDN源加载失败:', cdnSources[sourceIndex], error);
+                sourceIndex++;
+                tryNextSource();
+            });
+    }
+    
+    tryNextSource();
+}
+
+// 页面加载完成后开始加载库
+document.addEventListener('DOMContentLoaded', function() {
+    loadHtml2Canvas();
+});
