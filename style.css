@@ -1,0 +1,282 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+h2 {
+    color: #34495e;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+}
+
+.input-section, .preview-section {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.image-options {
+    margin-bottom: 10px;
+}
+
+.image-options input[type="radio"] {
+    margin-right: 5px;
+}
+
+.image-options label {
+    display: inline-block;
+    margin-right: 15px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.template-selection {
+    margin-top: 10px;
+}
+
+.template-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.template-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.template-img:hover {
+    border-color: #3498db;
+    transform: scale(1.05);
+}
+
+.template-img.selected {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus, textarea:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+input[type="color"] {
+    width: 60px;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+}
+
+textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+#uploadTemplateBtn {
+    background-color: #2ecc71;
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+#uploadTemplateBtn:hover {
+    background-color: #27ae60;
+}
+
+#posterCanvas {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.poster {
+    width: 375px; /* iPhone X宽度 */
+    height: 667px; /* iPhone X高度 */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.poster::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    filter: brightness(0.8);
+    z-index: -1;
+    border-radius: 10px;
+}
+
+.poster h3 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.poster h4 {
+    font-size: 22px;
+    margin-bottom: 30px;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.poster p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .input-section, .preview-section {
+        padding: 15px;
+    }
+    
+    .poster {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 9/16; /* 保持手机屏幕比例 */
+        min-height: 400px;
+    }
+    
+    .poster h3 {
+        font-size: 28px;
+    }
+    
+    .poster h4 {
+        font-size: 20px;
+    }
+    
+    .poster p {
+        font-size: 16px;
+    }
+    
+    /* 手机端优化 */
+    input[type="text"], textarea, button {
+        font-size: 16px; /* 防止iOS缩放 */
+    }
+    
+    .form-group label {
+        font-size: 16px;
+    }
+    
+    #posterCanvas {
+        overflow-x: auto;
+    }
+}
+
+/* 针对小屏幕设备的额外优化 */
+@media (max-width: 480px) {
+    .container {
+        padding: 5px;
+    }
+    
+    .input-section, .preview-section {
+        padding: 10px;
+    }
+    
+    .poster {
+        padding: 20px;
+    }
+    
+    .poster h3 {
+        font-size: 24px;
+    }
+    
+    .poster h4 {
+        font-size: 18px;
+    }
+    
+    .poster p {
+        font-size: 14px;
+    }
+    
+    button {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+    }
+}

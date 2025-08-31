@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海报生成器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>海报生成器</h1>
+        
+        <div class="input-section">
+            <h2>输入信息</h2>
+            <div class="form-group">
+                <label for="title">标题:</label>
+                <input type="text" id="title" placeholder="请输入海报标题">
+            </div>
+            
+            <div class="form-group">
+                <label for="subtitle">副标题:</label>
+                <input type="text" id="subtitle" placeholder="请输入副标题">
+            </div>
+            
+            <div class="form-group">
+                <label for="content">内容:</label>
+                <textarea id="content" placeholder="请输入海报内容"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>背景图片:</label>
+                <div class="image-options">
+                    <input type="radio" id="templateOption" name="imageType" value="template" checked>
+                    <label for="templateOption">模板</label>
+                    <input type="radio" id="urlOption" name="imageType" value="url">
+                    <label for="urlOption">URL</label>
+                    <input type="radio" id="localOption" name="imageType" value="local">
+                    <label for="localOption">上传图片</label>
+                </div>
+                
+                <!-- 模板选择 -->
+                <div id="templateSelection" class="template-selection">
+                    <div class="template-images">
+                        <img src="bg1.png" alt="背景1" class="template-img" data-src="bg1.png">
+                        <img src="bg2.png" alt="背景2" class="template-img" data-src="bg2.png">
+                        <img src="bg3.png" alt="背景3" class="template-img" data-src="bg3.png">
+                        <img src="bg4.png" alt="背景4" class="template-img" data-src="bg4.png">
+                    </div>
+                </div>
+                
+                <!-- URL输入 -->
+                <input type="text" id="imageUrl" placeholder="请输入背景图片URL" style="display: none;">
+                
+                <!-- 本地上传 -->
+                <input type="file" id="localImage" accept="image/*" style="display: none;">
+                
+                <!-- 上传模板按钮 -->
+                <div id="uploadTemplateSection" style="margin-top: 10px; display: none;">
+                    <button id="uploadTemplateBtn" type="button">上传为模板</button>
+                    <p>上传的图片将保存为新的背景模板</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="bgColor">背景颜色:</label>
+                <input type="color" id="bgColor" value="#f0f0f0">
+            </div>
+            
+            <button id="generateBtn">生成海报</button>
+        </div>
+        
+        <div class="preview-section">
+            <h2>海报预览</h2>
+            <div id="posterCanvas">
+                <div id="poster" class="poster">
+                    <h3 id="posterTitle">标题</h3>
+                    <h4 id="posterSubtitle">副标题</h4>
+                    <p id="posterContent">内容</p>
+                </div>
+            </div>
+            <button id="downloadBtn" disabled>下载海报</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
